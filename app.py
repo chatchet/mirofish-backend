@@ -1,38 +1,42 @@
-# 新加坡时间: 2026-04-22 09:40
+# 🕒 Singapore Time: 2026-04-22 11:26
 # =========================================
-# 这是一个最基础的 Flask 后端服务
-# 作用：提供一个 HTTP 接口用于测试部署是否成功
-# 原理：
-# - Flask 是一个轻量级 Web 框架
-# - 通过 @app.route("/") 定义访问路径
-# - 当访问服务器IP时，会返回字符串内容
+# 这是主入口 Flask App
+# 作用：注册所有 API 路由（Blueprint）
 # =========================================
 
 from flask import Flask
 
-# 创建 Flask 应用实例
-# __name__ 表示当前文件名，用于 Flask 定位资源
+# 导入各个模块（Blueprint）
+from services.health import health_bp
+from services.status import status_bp
+from services.markets import markets_bp
+from services.signals import signals_bp
+from strategies.basic import strategy_bp
+
+# 初始化 Flask
 app = Flask(__name__)
 
-# 定义根路径接口
+# =========================================
+# 注册所有模块（非常关键！）
+# =========================================
+app.register_blueprint(health_bp)
+app.register_blueprint(status_bp)
+app.register_blueprint(markets_bp)
+app.register_blueprint(signals_bp)
+app.register_blueprint(strategy_bp)
+
+# =========================================
+# 默认首页（测试用）
+# =========================================
 @app.route("/")
-def hello():
-    """
-    功能说明：
-    当用户访问 http://IP:端口/ 时执行这里
-    返回一个字符串作为网页内容
+def home():
+    return "MiroFish Backend Running 🚀"
 
-    你之后可以改这里返回 JSON / 数据 / AI结果等
-    """
-    return "Hello from mirofish-backend!"
-
-# 程序入口
+# =========================================
+# 启动服务
+# =========================================
 if __name__ == "__main__":
-    """
-    参数解释：
-    host="0.0.0.0"
-        → 允许外网访问（非常关键）
-    port=5000
-        → 服务运行端口
-    """
+    # 说明：
+    # host=0.0.0.0 → 允许外部访问（Zeabur必须）
+    # port=5000 → 必须和Zeabur端口一致
     app.run(host="0.0.0.0", port=5000)
